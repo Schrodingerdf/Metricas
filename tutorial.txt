@@ -1,0 +1,9 @@
+1) cd project_path
+
+2) Build virtual enviroment (optional)
+
+3) Define the app structure (working directory)
+
+4) Publish it in a GitHub repository (to share it openly)
+
+5) Run the application: streamlit run app.py
