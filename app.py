@@ -1,5 +1,6 @@
 import google.generativeai as genai
 import streamlit as st
+import pandas as pd
 import json
 
 # Define your API key and password
@@ -53,7 +54,16 @@ def text_page():
         
     # Text input for the query
     prompt = st.text_input("Ingresa tu pregunta:")
-    
+
+    # CSV File Uploader
+    uploaded_file = st.file_uploader("Sube un archivo CSV", type=["csv"])
+
+    if uploaded_file is not None:
+        # Read the uploaded CSV file into a DataFrame
+        df = pd.read_csv(uploaded_file)
+        st.write("Contenido del archivo CSV:")
+        st.dataframe(df)
+
     # Check if the query is provided
     if not prompt:
         st.error("Ingresa tu pregunta.")
