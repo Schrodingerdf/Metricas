@@ -1,3 +1,4 @@
+# Metricas
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -6,7 +7,6 @@ from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
 import google.generativeai as genai
-from fpdf import FPDF
 import json
 
 # Define your API key and password
@@ -102,12 +102,6 @@ def calcular_veintiles(df, y_real_col, prob_col):
 
     st.write(veintil_df)
 
-# Generar PDF (debes implementar esta función)
-def generar_pdf(ks_stat_train, ks_stat_oot, metrics_train, metrics_oot):
-    # Aquí va tu implementación para generar un PDF
-    pdf_file_path = "/path/to/your/pdf.pdf"  # Cambia esto a tu ruta deseada
-    return pdf_file_path
-
 # Main Streamlit app
 def text_page():
     
@@ -190,25 +184,74 @@ def text_page():
             ks_stat_train = evaluate_ks(y_real_train, proba_train)
             ks_stat_oot = evaluate_ks(y_real_oot, proba_oot)
 
-            # Mostrar los resultados de KS
-            st.write(f"Estadística KS para el conjunto de entrenamiento: {ks_stat_train.statistic:.4f}, p-value: {ks_stat_train.pvalue:.4f}")
-            st.write(f"Estadística KS para el conjunto OOT: {ks_stat_oot.statistic:.4f}, p-value: {ks_stat_oot.pvalue:.4f}")
+            # Mostrar resultados para el conjunto de entrenamiento
+            st.write(f"**Conjunto de Entrenamiento:**")
+            st.write(f"KS: {ks_stat_train.statistic:.4f} (p-value: {ks_stat_train.pvalue:.3e})")
 
-            # Calcular métricas y graficar
-            st.subheader("Métricas y Graficar la Matriz de Confusión para el conjunto de entrenamiento")
-            metrics_train = calcular_metricas_y_graficar(y_real_train, proba_train)
-            st.subheader("Métricas y Graficar la Matriz de Confusión para el conjunto OOT")
-            metrics_oot = calcular_metricas_y_graficar(y_real_oot, proba_oot)
+            # Mostrar resultados para el conjunto fuera de tiempo
+            st.write(f"**Conjunto Fuera de Tiempo:**")
+            st.write(f"KS: {ks_stat_oot.statistic:.4f} (p-value: {ks_stat_oot.pvalue:.3e})")
 
-            # Calcular veintiles
-            st.subheader("Análisis de Veintiles")
-            calcular_veintiles(df, y_real_col, prob_col)
+            # Generación de conclusión usando Gemini
+            prompt = f"Haz una conclusión sobre la prueba de Kolmogorov para el entrenamiento con valores: {ks_stat_train} y fuera de tiempo con valores: {ks_stat_oot}. si el p-valor es menor de 0.05 se puede concluir que el modelo esta discriminando de forma adecuada,hazlo en maximo 2 parrafos"
+            prompt_parts = [prompt]
+            conclusion = gemini.generate_content(prompt_parts).text
 
-            # Generar PDF
-            pdf_path = generar_pdf(ks_stat_train, ks_stat_oot, metrics_train, metrics_oot)
-            st.success("PDF generado con éxito.")
-            st.write(f"Descargar PDF: [Aquí](/{pdf_path})")
+            # Mostrar la conclusión generada
+            st.write("### Conclusión:")
+            st.write(conclusion)
 
-# Ejecutar la aplicación
+
+            # Métricas y matriz de confusión
+            st.subheader("Matriz de Confusión y Métricas")
+            
+            # Explicación breve
+            st.write(
+                "A continuación se presentan las matrices de confusión y las métricas asociadas para los conjuntos de entrenamiento y fuera de tiempo (OOT). "
+                "Estas métricas permiten evaluar el rendimiento del modelo en cada uno de estos conjuntos de datos."
+            )
+            
+            # Mostrar métricas y matriz de confusión para el conjunto de entrenamiento
+            st.write("TRAIN:")
+            accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_train, proba_train)
+            
+            # Generación de conclusión usando Gemini
+            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train},hazlo en maximo 2 parrafos"
+            prompt_parts = [prompt]
+            conclusion = gemini.generate_content(prompt_parts).text
+            
+            # Mostrar la conclusión generada
+            st.write("### Conclusión:")
+            st.write(conclusion)
+
+            
+            st.write("OOT:")
+            
+            # Mostrar métricas y matriz de confusión para el conjunto de entrenamiento
+            accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_oot, proba_oot)
+            
+            # Generación de conclusión usando Gemini
+            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train},hazlo en maximo 2 parrafos"
+            prompt_parts = [prompt]
+            conclusion = gemini.generate_content(prompt_parts).text
+            
+            # Mostrar la conclusión generada
+            st.write("### Conclusión:")
+            st.write(conclusion)    
+
+            # Veintiles
+            st.subheader("Tabla de Eficiencia")
+
+           # Explicación breve
+            st.write(
+                "Una tabla de eficiencia evalúa la precisión de un modelo predictivo al medir su capacidad para capturar correctamente un evento en segmentos de población ordenados. Es usada para validar modelos en áreas como crédito, riesgo o clasificación de clientes. "
+                )
+            
+            st.write("Train:")
+            calcular_veintiles(df[df[filtro_col] == 'train'], y_real_col, prob_col)
+            st.write("OOT:")
+            calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
+
+# Run the Streamlit app
 if __name__ == "__main__":
     text_page()
