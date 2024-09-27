@@ -173,6 +173,7 @@ if uploaded_file is not None:
 
         # KS
         st.subheader("Resultado del Test KS")
+        st.write(gemini.generate_content('Que es gemini?').text)
         st.write("Train:")
         ks_stat = evaluate_ks(y_real_train, proba_train)
         st.write("OOT:")
