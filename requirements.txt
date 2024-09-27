@@ -3,5 +3,5 @@ pandas
 numpy
 matplotlib  
 ks_2samp
-roc_curve
-metrics
+scipy
+scikit-learn 
