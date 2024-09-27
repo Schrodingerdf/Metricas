@@ -254,36 +254,6 @@ def text_page():
             st.write("OOT:")
             calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
 
-            # Inicializa la lista de mensajes en el estado de la sesión
-            if 'messages' not in st.session_state:
-                st.session_state.messages = []
-            
-            # Función para mostrar el chat
-            def mostrar_chat():
-                # Título del chat
-                st.subheader("Chat con IA")
-                
-                # Campo de entrada para preguntas del usuario
-                user_input = st.text_input("Escribe tu mensaje:")
-                
-                if user_input:
-                    # Agregar el mensaje del usuario a la lista
-                    st.session_state.messages.append({"role": "user", "content": user_input})
-                    
-                    # Generar respuesta usando Gemini
-                    response = gemini.generate_content([user_input]).text
-                    st.session_state.messages.append({"role": "assistant", "content": response})
-            
-                # Mostrar mensajes en el chat
-                for msg in st.session_state.messages:
-                    if msg["role"] == "user":
-                        st.write(f"You: {msg['content']}")
-                    else:
-                        st.write(f"Assistant: {msg['content']}")
-            
-            # Llama a la función para mostrar el chat al final de tu página
-            mostrar_chat()
-
 
 # Run the Streamlit app
 if __name__ == "__main__":
