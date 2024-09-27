@@ -175,8 +175,8 @@ if uploaded_file is not None:
         st.subheader("Resultado del Test KS")
         prompt = 'Que es gemini?'
         prompt_parts = [prompt]
-        st.write(gemini.generate_content('Que es gemini?').text)
-        st.write(gemini.generate_content('Que es gemini?').text)
+        st.write(gemini.generate_content(prompt_parts).text)
+        
         st.write("Train:")
         ks_stat = evaluate_ks(y_real_train, proba_train)
         st.write("OOT:")
