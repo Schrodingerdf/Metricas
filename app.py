@@ -189,7 +189,7 @@ def text_page():
             st.write(f"KS: {ks_stat_oot.statistic:.4f} (p-value: {ks_stat_oot.pvalue:.3e})")
 
             # Generación de conclusión usando Gemini
-            prompt = f"Haz una conclusión sobre el valor de la prueba de Kolmogorov para la muestra de entrenamiento: {ks_stat_train} y fuera de tiempo: {ks_stat_oot}. si el p-valor es menor de 0.05 se puede concluir que el modelo esta discriminando bien"
+            prompt = f"Haz una conclusión sobre la prueba de Kolmogorov para el entrenamiento con valores: {ks_stat_train} y fuera de tiempo con valores: {ks_stat_oot}. si el p-valor es menor de 0.05 se puede concluir que el modelo esta discriminando bien, hazlo solo en 2 lineas maximo"
             prompt_parts = [prompt]
             conclusion = gemini.generate_content(prompt_parts).text
 
@@ -209,6 +209,17 @@ def text_page():
 
             st.write("Train:")
             calcular_metricas_y_graficar(y_real_train, proba_train)
+            
+            # Generación de conclusión usando Gemini
+            prompt = f"Haz una conclusión sobre los resultados de {calcular_metricas_y_graficar(y_real_train, proba_train)} "
+            prompt_parts = [prompt]
+            conclusion = gemini.generate_content(prompt_parts).text
+
+            # Mostrar la conclusión generada
+            st.write("### Conclusión:")
+            st.write(conclusion)
+
+            
             st.write("OOT:")
             calcular_metricas_y_graficar(y_real_oot, proba_oot)
 
