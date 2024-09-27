@@ -212,7 +212,7 @@ def text_page():
             )
             
             # Mostrar métricas y matriz de confusión para el conjunto de entrenamiento
-            st.write("Train:")
+            st.write("TRAIN:")
             accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_train, proba_train)
             
             # Generación de conclusión usando Gemini
@@ -226,7 +226,19 @@ def text_page():
 
             
             st.write("OOT:")
-            calcular_metricas_y_graficar(y_real_oot, proba_oot)
+            
+            # Mostrar métricas y matriz de confusión para el conjunto de entrenamiento
+            st.write("TRAIN:")
+            accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_oot, proba_oot)
+            
+            # Generación de conclusión usando Gemini
+            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train}."
+            prompt_parts = [prompt]
+            conclusion = gemini.generate_content(prompt_parts).text
+            
+            # Mostrar la conclusión generada
+            st.write("### Conclusión:")
+            st.write(conclusion)    
 
             # Veintiles
             st.subheader("Tabla de Eficiencia")
