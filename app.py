@@ -2,9 +2,14 @@ import google.generativeai as genai
 import streamlit as st
 import json
 
+# Define your API key and password
+API_KEY = "AIzaSyCLY-K449EXP04NAMu2XEugi29HWGYdMlY"
+PASSWORD = "112357"
+
 # Function to initialize session state
 def initialize_session_state():
-    return st.session_state.setdefault('', None)
+    if 'password_correct' not in st.session_state:
+        st.session_state.password_correct = False
 
 # Main Streamlit app
 def text_page():
@@ -13,27 +18,29 @@ def text_page():
     # Initialize session state
     initialize_session_state()
 
-    # Configure API key
-    api_key = st.sidebar.text_input("Enter your API key:", value=st.session_state.api_key)
+    # Password input
+    password = st.sidebar.text_input("Enter your password:", type="password")
 
-    # Check if the API key is provided
-    if not api_key:
-        st.sidebar.error("Please enter your API key.")
-        st.stop()
+    # Check if the password is correct
+    if password == PASSWORD:
+        st.session_state.password_correct = True
     else:
-        # Store the API key in session state
-        st.session_state.api_key = api_key
+        if st.session_state.password_correct:
+            st.sidebar.success("Password is correct!")
+        else:
+            st.sidebar.error("Incorrect password. Please try again.")
+            st.stop()
 
-    genai.configure(api_key=api_key)
+    # Configure the Generative AI API with the provided key
+    genai.configure(api_key=API_KEY)
 
-    
     # Set up the model configuration options
     temperature = st.sidebar.slider("Temperature", 0.0, 1.0, 0.9, 0.1)
     top_p = st.sidebar.number_input("Top P", 0.0, 1.0, 1.0, 0.1)
     top_k = st.sidebar.number_input("Top K", 1, 100, 1)
     max_output_tokens = st.sidebar.number_input("Max Output Tokens", 1, 10000, 2048)
 
-    # Set up the model
+    # Set up the model configuration dictionary
     generation_config = {
         "temperature": temperature,
         "top_p": top_p,
@@ -41,35 +48,36 @@ def text_page():
         "max_output_tokens": max_output_tokens,
     }
 
-
-    safety_settings = "{}"
+    safety_settings = "{}"  # Placeholder for safety settings, can be modified as needed
     safety_settings = json.loads(safety_settings)
         
+    # Text input for the query
     prompt = st.text_input("Enter your Query:")
+    
     # Check if the query is provided
     if not prompt:
         st.error("Please enter your query.")
         st.stop()
 
-
-    gemini = genai.GenerativeModel(model_name="gemini-pro",
-                                  generation_config=generation_config,
-                                  safety_settings=safety_settings)
+    # Initialize the generative model
+    gemini = genai.GenerativeModel(
+        model_name="gemini-pro",
+        generation_config=generation_config,
+        safety_settings=safety_settings
+    )
                 
-
     prompt_parts = [prompt]
     
     try:
+        # Generate content using the model
         response = gemini.generate_content(prompt_parts)
-        st.subheader("Gemini:")
+        st.subheader("Gemini Response:")
         if response.text:
-            
             st.write(response.text)
         else:
             st.write("No output from Gemini.")
     except Exception as e:
-        st.write(f"An error occurred: {str(e)}")
-
+        st.error(f"An error occurred: {str(e)}")
 
 # Run the Streamlit app
 if __name__ == "__main__":
