@@ -4,7 +4,7 @@ import json
 
 # Function to initialize session state
 def initialize_session_state():
-    return st.session_state.setdefault('api_key', None)
+    return st.session_state.setdefault('AIzaSyCLY-K449EXP04NAMu2XEugi29HWGYdMlY', None)
 
 # Main Streamlit app
 def text_page():
@@ -14,7 +14,7 @@ def text_page():
     initialize_session_state()
 
     # Configure API key
-    api_key = st.sidebar.text_input("Enter your API key:", value=st.session_state.api_key)
+    #api_key = st.sidebar.text_input("Enter your API key:", value=st.session_state.api_key)
 
     # Check if the API key is provided
     if not api_key:
