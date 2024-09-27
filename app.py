@@ -88,7 +88,7 @@ def calcular_veintiles(df, y_real_col, prob_col):
     st.write(veintil_df)
 
 # Configuración de la aplicación de Streamlit
-st.title("Análisis de Modelos y Métricas")
+st.title("Métricas IA")
 
 # Subir archivo CSV
 uploaded_file = st.file_uploader("Sube un archivo CSV", type=["csv"])
@@ -100,7 +100,7 @@ if uploaded_file is not None:
     st.dataframe(df)
 
     # Seleccionar columnas para 'y_real' y 'proba'
-    y_real_col = st.selectbox("Selecciona la columna de y_real (etiquetas reales):", df.columns)
+    y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
     prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
 
     # Mostrar análisis
