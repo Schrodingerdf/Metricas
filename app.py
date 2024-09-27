@@ -102,7 +102,8 @@ if uploaded_file is not None:
     # Seleccionar columnas para 'y_real' y 'proba'
     y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
     prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
-    filtro = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
+    filtro = st.selectbox("Selecciona la columna de filtro:", df.columns)
+    
     # Mostrar análisis
     if st.button("Ejecutar análisis"):
         y_real = df[y_real_col]
