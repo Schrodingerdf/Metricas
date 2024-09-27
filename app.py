@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # Título de la app
-st.title('Aplicación para Ingresar y Visualizar Datos')
+st.title('AUTO-DOC')
 
 # Inicializar una lista para almacenar los datos
 if 'data' not in st.session_state:
