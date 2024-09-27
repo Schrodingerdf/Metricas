@@ -228,7 +228,6 @@ def text_page():
             st.write("OOT:")
             
             # Mostrar métricas y matriz de confusión para el conjunto de entrenamiento
-            st.write("TRAIN:")
             accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_oot, proba_oot)
             
             # Generación de conclusión usando Gemini
@@ -242,6 +241,12 @@ def text_page():
 
             # Veintiles
             st.subheader("Tabla de Eficiencia")
+
+           # Explicación breve
+            st.write(
+                "Una tabla de eficiencia evalúa la precisión de un modelo predictivo al medir su capacidad para capturar correctamente un evento en segmentos de población ordenados. Es usada para validar modelos en áreas como crédito, riesgo o clasificación de clientes. "
+                )
+            
             st.write("Train:")
             calcular_veintiles(df[df[filtro_col] == 'train'], y_real_col, prob_col)
             st.write("OOT:")
