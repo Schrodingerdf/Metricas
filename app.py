@@ -3,7 +3,7 @@ import pandas as pd
 import altair as alt
 
 # Set the title of the app
-st.title("App Diego Flores") 
+st.title("AutoDoc") 
 
 # Título de la app
 st.title('Cargar y visualizar archivo CSV')
