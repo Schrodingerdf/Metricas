@@ -1,45 +1,38 @@
-import streamlit as st
-import openai  # Asegúrate de tener instalada la biblioteca openai
+import subprocess
+import os
 
-# Configura tu clave de API de OpenAI (puedes cambiarlo a Gemini si tienes una API de Gemini)
-openai.api_key = 'tu_clave_de_api'
+def instalar_ollama():
+    # Ejecutar el comando curl para instalar Ollama
+    try:
+        print("Instalando Ollama...")
+        subprocess.run(["curl", "https://ollama.ai/install.sh", "|", "sh"], check=True)
+        print("Ollama instalado correctamente.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error durante la instalación de Ollama: {e}")
 
-# Título de la app
-st.title('Chatbot Interactivo')
+def iniciar_servidor_ollama():
+    # Ejecutar el comando para iniciar el servidor Ollama
+    try:
+        print("Iniciando el servidor de Ollama...")
+        subprocess.run(["ollama", "serve"], check=True)
+        print("Servidor de Ollama iniciado correctamente.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error al iniciar el servidor de Ollama: {e}")
 
-# Inicializar el historial de chat si no existe en la sesión
-if 'chat_history' not in st.session_state:
-    st.session_state['chat_history'] = []
+def descargar_modelo(name_model):
+    # Ejecutar el comando para descargar el modelo de Ollama
+    try:
+        print(f"Descargando el modelo {name_model}...")
+        subprocess.run(["ollama", "pull", name_model], check=True)
+        print(f"Modelo {name_model} descargado correctamente.")
+    except subprocess.CalledProcessError as e:
+        print(f"Error al descargar el modelo {name_model}: {e}")
 
-# Función para obtener la respuesta del modelo de lenguaje
-def obtener_respuesta(pregunta):
-    # Llama al modelo GPT-4 de OpenAI (puedes usar cualquier modelo basado en API)
-    response = openai.Completion.create(
-        engine="text-davinci-003",  # Cambia esto al modelo que prefieras
-        prompt=pregunta,
-        max_tokens=150,
-        temperature=0.7
-    )
-    return response['choices'][0]['text'].strip()
+if __name__ == "__main__":
+    # Llamar a las funciones en orden
+    instalar_ollama()
+    iniciar_servidor_ollama()
 
-# Caja de texto para que el usuario ingrese su mensaje
-pregunta_usuario = st.text_input("Haz tu pregunta:")
-
-# Si el usuario escribe algo y presiona Enter
-if pregunta_usuario:
-    # Agrega la pregunta al historial
-    st.session_state['chat_history'].append(f"Tú: {pregunta_usuario}")
-    
-    # Obtiene la respuesta del modelo
-    respuesta = obtener_respuesta(pregunta_usuario)
-    
-    # Agrega la respuesta del chatbot al historial
-    st.session_state['chat_history'].append(f"Chatbot: {respuesta}")
-    
-    # Limpiar la caja de texto después de enviar la pregunta
-    st.experimental_rerun()
-
-# Mostrar el historial de chat
-if st.session_state['chat_history']:
-    for mensaje in st.session_state['chat_history']:
-        st.write(mensaje)
+    # Especificar el nombre del modelo que deseas descargar
+    name_model = "phi3:medium"
+    descargar_modelo(name_model)
