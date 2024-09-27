@@ -6,63 +6,6 @@ from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
 
-## GenIA
-import google.generativeai as genai
-import json
-
-# Define your API key
-API_KEY = "AIzaSyCLY-K449EXP04NAMu2XEugi29HWGYdMlY"
-
-# Function to initialize session state
-def initialize_session_state():
-    if 'api_key_correct' not in st.session_state:
-        st.session_state.api_key_correct = False
-
-# Main Streamlit app
-def text_page():
-    # Initialize session state
-    initialize_session_state()
-
-    # API key input
-    api_key = st.sidebar.text_input("Enter your API key:", type="password")
-
-    # Check if the API key is correct
-    if api_key == API_KEY:
-        st.session_state.api_key_correct = True
-    else:
-        if st.session_state.api_key_correct:
-            st.sidebar.success("API key is correct!")
-        else:
-            st.sidebar.error("Incorrect API key. Please try again.")
-            st.stop()
-
-    # Configure the Generative AI API with the provided key
-    genai.configure(api_key=API_KEY)
-
-    # Manual model configuration options
-    temperature = 0.9
-    top_p = 1.0
-    top_k = 1
-    max_output_tokens = 2048
-
-    # Set up the model configuration dictionary manually
-    generation_config = {
-        "temperature": temperature,
-        "top_p": top_p,
-        "top_k": top_k,
-        "max_output_tokens": max_output_tokens,
-    }
-
-    safety_settings = "{}"  # Placeholder for safety settings, can be modified as needed
-    safety_settings = json.loads(safety_settings)
-
-    # Initialize the generative model
-    gemini = genai.GenerativeModel(
-        model_name="gemini-pro",
-        generation_config=generation_config,
-        safety_settings=safety_settings
-    )
-
 # Función KS
 def evaluate_ks(y_real, y_proba):
     df = pd.DataFrame({
@@ -163,22 +106,22 @@ if uploaded_file is not None:
 
     # Mostrar análisis
     if st.button("Ejecutar análisis"):
-        y_real_train = df[df[filtro] == 'train'][y_real_col]
-        proba_train = df[df[filtro] == 'train'][prob_col]
 
-        y_real_oot = df[df[filtro] == 'oot'][y_real_col]
-        proba_oot = df[df[filtro] == 'oot'][prob_col]
+        y_real_train = df[df.filtro=='train'][y_real_col]
+        proba_train = df[df.filtro=='train'][prob_col]
+
+        y_real_oot = df[df.filtro=='oot'][y_real_col]
+        proba_oot = df[df.filtro=='oot'][prob_col]
+
 
         # KS
         st.subheader("Resultado del Test KS")
-        prompt = 'Que es la prueba de kolgomorov?'
-        prompt_parts = [prompt]
-        st.write(gemini.generate_content(prompt_parts).text)
-
+        
         st.write("Train:")
-        ks_stat_train = evaluate_ks(y_real_train, proba_train)
+        ks_stat = evaluate_ks(y_real_train, proba_train)
         st.write("OOT:")
-        ks_stat_oot = evaluate_ks(y_real_oot, proba_oot)
+        ks_stat = evaluate_ks(y_real_oot, proba_oot)
+
 
         # Métricas y matriz de confusión
         st.subheader("Matriz de Confusión y Métricas")
@@ -190,9 +133,6 @@ if uploaded_file is not None:
         # Veintiles
         st.subheader("Tabla de Eficiencia")
         st.write("Train:")
-        calcular_veintiles(df[df[filtro] == 'train'], y_real_col, prob_col)
+        calcular_veintiles(df[df.filtro=='train'], y_real_col, prob_col)
         st.write("OOT:")
-        calcular_veintiles(df[df[filtro] == 'oot'], y_real_col, prob_col)
-
-# Llamada a la función principal
-text_page()
+        calcular_veintiles(df[df.filtro=='oot'], y_real_col, prob_col)
