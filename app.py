@@ -24,8 +24,7 @@ def initialize_session_state():
 
 # Main Streamlit app
 def text_page():
-    st.title("Métricas IA")
-
+    
     # Initialize session state
     initialize_session_state()
 
@@ -154,7 +153,10 @@ def calcular_veintiles(df, y_real_col, prob_col):
     veintil_df['%Malos_acum'] = (veintil_df['Malos_acum'] / veintil_df['N°Malos'].sum() * 100).round(1).apply(lambda x: f"{x:.1f}%")
 
     st.write(veintil_df)
-    
+
+# Configuración de la aplicación de Streamlit
+st.title("Métricas IA")
+
 # Subir archivo CSV
 uploaded_file = st.file_uploader("Sube un archivo CSV", type=["csv"])
 
