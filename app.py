@@ -6,12 +6,8 @@ from scipy.stats import ks_2samp
 from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
-
-## GenIA
 import google.generativeai as genai
-import streamlit as st
 import json
-
 
 # Define your API key and password
 API_KEY = "AIzaSyCLY-K449EXP04NAMu2XEugi29HWGYdMlY"
@@ -22,54 +18,6 @@ def initialize_session_state():
     if 'password_correct' not in st.session_state:
         st.session_state.password_correct = False
 
-# Main Streamlit app
-def text_page():
-    
-    # Initialize session state
-    initialize_session_state()
-
-    # Password input
-    password = st.sidebar.text_input("Enter your password:", type="password")
-
-    # Check if the password is correct
-    if password == PASSWORD:
-        st.session_state.password_correct = True
-    else:
-        if st.session_state.password_correct:
-            st.sidebar.success("Password is correct!")
-        else:
-            st.sidebar.error("Incorrect password. Please try again.")
-            st.stop()
-
-    # Configure the Generative AI API with the provided key
-    genai.configure(api_key=API_KEY)
-
-    # Manual model configuration options
-    temperature = 0.9
-    top_p = 1.0
-    top_k = 1
-    max_output_tokens = 2048
-
-    # Set up the model configuration dictionary manually
-    generation_config = {
-        "temperature": temperature,
-        "top_p": top_p,
-        "top_k": top_k,
-        "max_output_tokens": max_output_tokens,
-    }
-
-    safety_settings = "{}"  # Placeholder for safety settings, can be modified as needed
-    safety_settings = json.loads(safety_settings)
-        
-    # Initialize the generative model
-    gemini = genai.GenerativeModel(
-        model_name="gemini-pro",
-        generation_config=generation_config,
-        safety_settings=safety_settings
-    )
-    
-    # Text input for the query
-
 # Función KS
 def evaluate_ks(y_real, y_proba):
     df = pd.DataFrame({
@@ -79,8 +27,7 @@ def evaluate_ks(y_real, y_proba):
     class0_proba = df.loc[df['real'] == 0, 'proba']
     class1_proba = df.loc[df['real'] == 1, 'proba']
     ks_result = ks_2samp(class0_proba, class1_proba)
-    st.write(f"KS: {ks_result.statistic:.4f} (p-value: {ks_result.pvalue:.3e})")
-    return ks_result.statistic
+    return ks_result
 
 # Función para calcular el umbral óptimo
 def calcular_umbral_optimo(y_real, proba):
@@ -151,58 +98,99 @@ def calcular_veintiles(df, y_real_col, prob_col):
 
     st.write(veintil_df)
 
-# Configuración de la aplicación de Streamlit
-st.title("Métricas IA")
+# Main Streamlit app
+def text_page():
+    
+    # Initialize session state
+    initialize_session_state()
 
-# Subir archivo CSV
-uploaded_file = st.file_uploader("Sube un archivo CSV", type=["csv"])
+    # Password input
+    password = st.sidebar.text_input("Enter your password:", type="password")
 
-if uploaded_file is not None:
-    # Leer CSV
-    df = pd.read_csv(uploaded_file)
-    st.write("Contenido del archivo CSV:")
-    st.dataframe(df)
+    # Check if the password is correct
+    if password == PASSWORD:
+        st.session_state.password_correct = True
+    else:
+        if st.session_state.password_correct:
+            st.sidebar.success("Password is correct!")
+        else:
+            st.sidebar.error("Incorrect password. Please try again.")
+            st.stop()
 
-    # Seleccionar columnas para 'y_real' y 'proba'
-    y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
-    prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
-    filtro = st.selectbox("Selecciona la columna de filtro:", df.columns)
+    # Configure the Generative AI API with the provided key
+    genai.configure(api_key=API_KEY)
 
-    # Mostrar análisis
-    if st.button("Ejecutar análisis"):
+    # Manual model configuration options
+    temperature = 0.9
+    top_p = 1.0
+    top_k = 1
+    max_output_tokens = 2048
 
-        y_real_train = df[df.filtro=='train'][y_real_col]
-        proba_train = df[df.filtro=='train'][prob_col]
+    # Set up the model configuration dictionary manually
+    generation_config = {
+        "temperature": temperature,
+        "top_p": top_p,
+        "top_k": top_k,
+        "max_output_tokens": max_output_tokens,
+    }
 
-        y_real_oot = df[df.filtro=='oot'][y_real_col]
-        proba_oot = df[df.filtro=='oot'][prob_col]
+    safety_settings = "{}"  # Placeholder for safety settings, can be modified as needed
+    safety_settings = json.loads(safety_settings)
+        
+    # Initialize the generative model
+    gemini = genai.GenerativeModel(
+        model_name="gemini-pro",
+        generation_config=generation_config,
+        safety_settings=safety_settings
+    )
 
+    # Subir archivo CSV
+    uploaded_file = st.file_uploader("Sube un archivo CSV", type=["csv"])
 
-        # KS
-        st.subheader("Resultado del Test KS")
-        prompt = 'Describe la prueba de kolgomorov en 2 oraciones?'
-        prompt_parts = [prompt]
-        st.write(gemini.generate_content(prompt_parts).text)
-        st.write("Train:")
-        ks_stat = evaluate_ks(y_real_train, proba_train)
-        st.write("OOT:")
-        ks_stat = evaluate_ks(y_real_oot, proba_oot)
+    if uploaded_file is not None:
+        # Leer CSV
+        df = pd.read_csv(uploaded_file)
+        st.write("Contenido del archivo CSV:")
+        st.dataframe(df)
 
+        # Seleccionar columnas para 'y_real' y 'proba'
+        y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
+        prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
+        filtro_col = st.selectbox("Selecciona la columna de filtro:", df.columns)
 
-        # Métricas y matriz de confusión
-        st.subheader("Matriz de Confusión y Métricas")
-        st.write("Train:")
-        calcular_metricas_y_graficar(y_real_train, proba_train)
-        st.write("OOT:")
-        calcular_metricas_y_graficar(y_real_oot, proba_oot)
+        # Mostrar análisis
+        if st.button("Ejecutar análisis"):
+            y_real_train = df[df[filtro_col] == 'train'][y_real_col]
+            proba_train = df[df[filtro_col] == 'train'][prob_col]
 
-        # Veintiles
-        st.subheader("Tabla de Eficiencia")
-        st.write("Train:")
-        calcular_veintiles(df[df.filtro=='train'], y_real_col, prob_col)
-        st.write("OOT:")
-        calcular_veintiles(df[df.filtro=='oot'], y_real_col, prob_col)
+            y_real_oot = df[df[filtro_col] == 'oot'][y_real_col]
+            proba_oot = df[df[filtro_col] == 'oot'][prob_col]
 
+            # KS
+            st.subheader("Resultado del Test KS")
+            prompt = 'Describe la prueba de Kolmogorov en 2 oraciones'
+            prompt_parts = [prompt]
+            st.write(gemini.generate_content(prompt_parts).text)
+            st.write("Train:")
+            ks_stat_train = evaluate_ks(y_real_train, proba_train)
+            st.write(f"KS: {ks_stat_train.statistic:.4f} (p-value: {ks_stat_train.pvalue:.3e})")
+            st.write("OOT:")
+            ks_stat_oot = evaluate_ks(y_real_oot, proba_oot)
+            st.write(f"KS: {ks_stat_oot.statistic:.4f} (p-value: {ks_stat_oot.pvalue:.3e})")
+
+            # Métricas y matriz de confusión
+            st.subheader("Matriz de Confusión y Métricas")
+            st.write("Train:")
+            calcular_metricas_y_graficar(y_real_train, proba_train)
+            st.write("OOT:")
+            calcular_metricas_y_graficar(y_real_oot, proba_oot)
+
+            # Veintiles
+            st.subheader("Tabla de Eficiencia")
+            st.write("Train:")
+            calcular_veintiles(df[df[filtro_col] == 'train'], y_real_col, prob_col)
+            st.write("OOT:")
+            calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
 
 # Run the Streamlit app
 if __name__ == "__main__":
