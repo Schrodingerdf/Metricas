@@ -254,38 +254,22 @@ def text_page():
             st.write("OOT:")
             calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
             
-            # Crear una sección de chat
-            st.subheader("Chat con Gemini")
-            
-            # Inicializar la lista de mensajes en el estado de sesión
-            if 'messages' not in st.session_state:
-                st.session_state.messages = []
-            
-            # Cuadro de texto para ingresar preguntas
-            user_input = st.text_input("Escribe tu pregunta aquí:")
-            
-            # Botón para enviar la pregunta
-            if st.button("Enviar"):
-                if user_input:
-                    # Agregar el mensaje del usuario a la lista
-                    st.session_state.messages.append({"role": "user", "content": user_input})
-                    
-                    # Generar la respuesta usando el modelo
-                    with st.spinner("Generando respuesta..."):
-                        response = gemini.generate_content([user_input]).text
-                    
-                    # Agregar la respuesta del modelo a la lista
-                    st.session_state.messages.append({"role": "assistant", "content": response})
-                    
-                    # Limpiar el campo de texto
-                    user_input = ""
-            
-            # Mostrar el historial de la conversación
-            for message in st.session_state.messages:
-                if message["role"] == "user":
-                    st.write(f"**Tú:** {message['content']}")
+            # Chat functionality
+            st.subheader("Chat")
+            user_input = st.text_input("Escribe tu mensaje:")
+
+            if user_input:
+                st.session_state.messages.append({"role": "user", "content": user_input})
+                # Call the Generative AI model
+                response = gemini.generate(user_input)
+                st.session_state.messages.append({"role": "assistant", "content": response["output"]})
+
+            # Display the chat messages
+            for msg in st.session_state.messages:
+                if msg["role"] == "user":
+                    st.write(f"You: {msg['content']}")
                 else:
-                    st.write(f"**Gemini:** {message['content']}")
+                    st.write(f"Assistant: {msg['content']}")
 
 # Run the Streamlit app
 if __name__ == "__main__":
