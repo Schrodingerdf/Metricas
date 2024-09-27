@@ -1,5 +1,4 @@
 import streamlit as st
-from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Configurar la clave de API de Google Gemini
@@ -26,4 +25,3 @@ if st.button("Consultar a Gemini"):
 
     # Mostrar la respuesta de Gemini
     st.markdown(f"**Respuesta de Gemini:**\n\n{response_txt.content}")
-
