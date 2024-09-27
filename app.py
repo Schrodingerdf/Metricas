@@ -116,16 +116,23 @@ if uploaded_file is not None:
 
         # KS
         st.subheader("Resultado del Test KS")
+        
+        st.write("Train:")
         ks_stat = evaluate_ks(y_real_train, proba_train)
+        st.write("OOT:")
         ks_stat = evaluate_ks(y_real_oot, proba_oot)
 
 
         # Métricas y matriz de confusión
         st.subheader("Matriz de Confusión y Métricas")
+        st.write("Train:")
         calcular_metricas_y_graficar(y_real_train, proba_train)
+        st.write("OOT:")
         calcular_metricas_y_graficar(y_real_oot, proba_oot)
 
         # Veintiles
         st.subheader("Tabla de Eficiencia")
+        st.write("Train:")
         calcular_veintiles(df[df.filtro=='train'], y_real_col, prob_col)
+        st.write("OOT:")
         calcular_veintiles(df[df.filtro=='oot'], y_real_col, prob_col)
