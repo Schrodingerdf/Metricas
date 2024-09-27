@@ -106,7 +106,6 @@ def calcular_veintiles(df, y_real_col, prob_col):
 def text_page():
 
     st.title("Métricas IA")
-    st.write("¡Bienvenidos a Métricas IA! 🚀 Con nuestra herramienta, puedes calcular de manera rápida y sencilla las principales métricas de evaluación de modelos de scoring, todo potenciado con inteligencia artificial. 📊 Obtén análisis precisos y relevantes que te ayudarán a tomar decisiones informadas, evaluando el rendimiento de tus modelos desde la precisión hasta la matriz de confusión. Con Métricas IA, optimiza tus modelos y explora el potencial de tus datos de manera eficiente y efectiva. 💡✨")
     # Initialize session state
     initialize_session_state()
 
@@ -253,24 +252,7 @@ def text_page():
             calcular_veintiles(df[df[filtro_col] == 'train'], y_real_col, prob_col)
             st.write("OOT:")
             calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
-            
-            # Chat functionality
-            st.subheader("Chat")
-            user_input = st.text_input("Escribe tu mensaje:")
-        
-            if user_input:
-                st.session_state.messages.append({"role": "user", "content": user_input})
-                # Call the Generative AI model
-                response = gemini.generate(user_input)
-                st.session_state.messages.append({"role": "assistant", "content": response["output"]})
-        
-            # Display the chat messages
-            for msg in st.session_state.messages:
-                if msg["role"] == "user":
-                    st.write(f"You: {msg['content']}")
-                else:
-                    st.write(f"Assistant: {msg['content']}")
-        
-        # Run the Streamlit app
-        if __name__ == "__main__":
-            text_page()
+
+# Run the Streamlit app
+if __name__ == "__main__":
+    text_page()
