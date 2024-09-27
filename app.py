@@ -45,23 +45,27 @@ def calcular_metricas_y_graficar(y_real, proba):
     
     # Graficar matriz de confusión
     cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix=confusion_matrix, display_labels=[False, True])
-    fig, ax = plt.subplots(figsize=(4, 3))
+    fig, ax = plt.subplots(figsize=(8, 6))
     cm_display.plot(ax=ax, cmap=plt.cm.YlGnBu)
     st.pyplot(fig)
     
-    # Calcular y mostrar métricas
+    # Calcular métricas
     Accuracy = metrics.accuracy_score(y_real, y_pred)
     Precision = metrics.precision_score(y_real, y_pred)
     Sensitivity_recall = metrics.recall_score(y_real, y_pred)
     Specificity = metrics.recall_score(y_real, y_pred, pos_label=0)
     F1_score = metrics.f1_score(y_real, y_pred)
 
+    # Mostrar métricas
     st.write(f"Umbral óptimo: {umbral_optimo:.4f}")
     st.write(f"Accuracy: {Accuracy:.4f}")
     st.write(f"Precision: {Precision:.4f}")
     st.write(f"Sensitivity/Recall: {Sensitivity_recall:.4f}")
     st.write(f"Specificity: {Specificity:.4f}")
     st.write(f"F1 Score: {F1_score:.4f}")
+    
+    # Asegurarse de devolver las métricas
+    return Accuracy, Precision, Sensitivity_recall, Specificity, F1_score
 
 # Función para calcular veintiles
 def calcular_veintiles(df, y_real_col, prob_col):
