@@ -1,4 +1,3 @@
-# Metricas
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -9,9 +8,7 @@ import matplotlib.pyplot as plt
 
 ## GenIA
 import google.generativeai as genai
-import streamlit as st
 import json
-
 
 # Define your API key and password
 API_KEY = "AIzaSyCLY-K449EXP04NAMu2XEugi29HWGYdMlY"
@@ -24,7 +21,6 @@ def initialize_session_state():
 
 # Main Streamlit app
 def text_page():
-    
     # Initialize session state
     initialize_session_state()
 
@@ -60,18 +56,13 @@ def text_page():
 
     safety_settings = "{}"  # Placeholder for safety settings, can be modified as needed
     safety_settings = json.loads(safety_settings)
-        
+
     # Initialize the generative model
     gemini = genai.GenerativeModel(
         model_name="gemini-pro",
         generation_config=generation_config,
         safety_settings=safety_settings
     )
-    
-    # Text input for the query
-    #prompt = 'Que es gemini?'
-    #prompt_parts = [prompt]
-    #st.write(gemini.generate_content(prompt_parts).text)
 
 # Función KS
 def evaluate_ks(y_real, y_proba):
@@ -174,21 +165,18 @@ if uploaded_file is not None:
     # Mostrar análisis
     if st.button("Ejecutar análisis"):
 
-        y_real_train = df[df.filtro=='train'][y_real_col]
-        proba_train = df[df.filtro=='train'][prob_col]
+        y_real_train = df[df[filtro] == 'train'][y_real_col]
+        proba_train = df[df[filtro] == 'train'][prob_col]
 
-        y_real_oot = df[df.filtro=='oot'][y_real_col]
-        proba_oot = df[df.filtro=='oot'][prob_col]
-
+        y_real_oot = df[df[filtro] == 'oot'][y_real_col]
+        proba_oot = df[df[filtro] == 'oot'][prob_col]
 
         # KS
         st.subheader("Resultado del Test KS")
-        
         st.write("Train:")
         ks_stat = evaluate_ks(y_real_train, proba_train)
         st.write("OOT:")
         ks_stat = evaluate_ks(y_real_oot, proba_oot)
-
 
         # Métricas y matriz de confusión
         st.subheader("Matriz de Confusión y Métricas")
@@ -200,10 +188,9 @@ if uploaded_file is not None:
         # Veintiles
         st.subheader("Tabla de Eficiencia")
         st.write("Train:")
-        calcular_veintiles(df[df.filtro=='train'], y_real_col, prob_col)
+        calcular_veintiles(df[df[filtro] == 'train'], y_real_col, prob_col)
         st.write("OOT:")
-        calcular_veintiles(df[df.filtro=='oot'], y_real_col, prob_col)
-
+        calcular_veintiles(df[df[filtro] == 'oot'], y_real_col, prob_col)
 
 # Run the Streamlit app
 if __name__ == "__main__":
