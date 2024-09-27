@@ -102,7 +102,7 @@ if uploaded_file is not None:
     # Seleccionar columnas para 'y_real' y 'proba'
     y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
     prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
-
+    filtro = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
     # Mostrar análisis
     if st.button("Ejecutar análisis"):
         y_real = df[y_real_col]
@@ -117,5 +117,5 @@ if uploaded_file is not None:
         calcular_metricas_y_graficar(y_real, proba)
 
         # Veintiles
-        st.subheader("Tabla de Veintiles")
+        st.subheader("Tabla de Eficiencia")
         calcular_veintiles(df, y_real_col, prob_col)
