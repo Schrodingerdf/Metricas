@@ -104,7 +104,8 @@ def calcular_veintiles(df, y_real_col, prob_col):
 
 # Main Streamlit app
 def text_page():
-    
+
+    st.title("Métricas IA")
     # Initialize session state
     initialize_session_state()
 
