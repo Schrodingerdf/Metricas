@@ -127,4 +127,5 @@ if uploaded_file is not None:
 
         # Veintiles
         st.subheader("Tabla de Eficiencia")
-        calcular_veintiles(df, y_real_col, prob_col)
+        calcular_veintiles(df[df.filtro=='train'], y_real_col, prob_col)
+        calcular_veintiles(df[df.filtro=='oot'], y_real_col, prob_col)
