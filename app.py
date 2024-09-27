@@ -22,18 +22,25 @@ def text_page():
     # Initialize session state
     initialize_session_state()
 
+    # Load file uploader widget before password check
+    uploaded_file = st.file_uploader("Sube un archivo CSV", type=["csv"])
+
     # Password input
-    password = st.sidebar.text_input("Enter your password:", type="password")
+    if 'password_input' not in st.session_state:
+        st.session_state.password_input = ""
+
+    st.session_state.password_input = st.sidebar.text_input("Ingresa tu contraseña:", type="password")
 
     # Check if the password is correct
-    if password == PASSWORD:
+    if st.session_state.password_input == PASSWORD:
         st.session_state.password_correct = True
+        st.sidebar.success("Contraseña correcta!")
     else:
         if st.session_state.password_correct:
-            st.sidebar.success("Password is correct!")
+            st.sidebar.success("Contraseña es correcta!")
         else:
-            st.sidebar.error("Incorrect password. Please try again.")
-            st.stop()
+            st.sidebar.error("Contraseña incorrecta. Por favor intenta de nuevo.")
+            return  # Detener la ejecución si la contraseña no es correcta
 
     # Configure the Generative AI API with the provided key
     genai.configure(api_key=API_KEY)
@@ -148,55 +155,54 @@ def calcular_veintiles(df, y_real_col, prob_col):
 # Configuración de la aplicación de Streamlit
 st.title("Métricas IA")
 
-# Subir archivo CSV
-uploaded_file = st.file_uploader("Sube un archivo CSV", type=["csv"])
+# Llama a text_page para manejar la lógica principal
+gemini = text_page()  # Inicializa gemini al inicio
 
-if uploaded_file is not None:
-    # Leer CSV
-    df = pd.read_csv(uploaded_file)
-    st.write("Contenido del archivo CSV:")
-    st.dataframe(df)
-
-    # Seleccionar columnas para 'y_real' y 'proba'
-    y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
-    prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
-    filtro = st.selectbox("Selecciona la columna de filtro:", df.columns)
-
-    # Mostrar análisis
+if gemini:  # Solo procede si gemini fue inicializado correctamente
     if st.button("Ejecutar análisis"):
-        gemini = text_page()  # Llama a text_page para inicializar gemini
+        # Verificar si el archivo ha sido subido
+        if uploaded_file is not None:
+            # Leer CSV
+            df = pd.read_csv(uploaded_file)
+            st.write("Contenido del archivo CSV:")
+            st.dataframe(df)
 
-        y_real_train = df[df[filtro] == 'train'][y_real_col]
-        proba_train = df[df[filtro] == 'train'][prob_col]
+            # Seleccionar columnas para 'y_real' y 'proba'
+            y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
+            prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
+            filtro = st.selectbox("Selecciona la columna de filtro:", df.columns)
 
-        y_real_oot = df[df[filtro] == 'oot'][y_real_col]
-        proba_oot = df[df[filtro] == 'oot'][prob_col]
+            y_real_train = df[df[filtro] == 'train'][y_real_col]
+            proba_train = df[df[filtro] == 'train'][prob_col]
 
-        # KS
-        st.subheader("Resultado del Test KS")
-        prompt = 'Que es la prueba de kolgomorov?'
-        prompt_parts = [prompt]
-        st.write(gemini.generate_content(prompt_parts).text)
-        
-        st.write("Train:")
-        ks_stat = evaluate_ks(y_real_train, proba_train)
-        st.write("OOT:")
-        ks_stat = evaluate_ks(y_real_oot, proba_oot)
+            y_real_oot = df[df[filtro] == 'oot'][y_real_col]
+            proba_oot = df[df[filtro] == 'oot'][prob_col]
 
-        # Métricas y matriz de confusión
-        st.subheader("Matriz de Confusión y Métricas")
-        st.write("Train:")
-        calcular_metricas_y_graficar(y_real_train, proba_train)
-        st.write("OOT:")
-        calcular_metricas_y_graficar(y_real_oot, proba_oot)
+            # KS
+            st.subheader("Resultado del Test KS")
+            prompt = 'Que es la prueba de kolgomorov?'
+            prompt_parts = [prompt]
+            st.write(gemini.generate_content(prompt_parts).text)
 
-        # Veintiles
-        st.subheader("Tabla de Eficiencia")
-        st.write("Train:")
-        calcular_veintiles(df[df[filtro] == 'train'], y_real_col, prob_col)
-        st.write("OOT:")
-        calcular_veintiles(df[df[filtro] == 'oot'], y_real_col, prob_col)
+            st.write("Train:")
+            ks_stat_train = evaluate_ks(y_real_train, proba_train)
+            st.write("OOT:")
+            ks_stat_oot = evaluate_ks(y_real_oot, proba_oot)
 
-# Run the Streamlit app
+            # Métricas y matriz de confusión
+            st.subheader("Matriz de Confusión y Métricas")
+            st.write("Train:")
+            calcular_metricas_y_graficar(y_real_train, proba_train)
+            st.write("OOT:")
+            calcular_metricas_y_graficar(y_real_oot, proba_oot)
+
+            # Veintiles
+            st.subheader("Tabla de Eficiencia")
+            st.write("Train:")
+            calcular_veintiles(df[df[filtro] == 'train'], y_real_col, prob_col)
+            st.write("OOT:")
+            calcular_veintiles(df[df[filtro] == 'oot'], y_real_col, prob_col)
+
+# Ejecutar la aplicación de Streamlit
 if __name__ == "__main__":
     text_page()
