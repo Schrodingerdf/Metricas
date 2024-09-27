@@ -13,7 +13,7 @@ def initialize_session_state():
 
 # Main Streamlit app
 def text_page():
-    st.title("Gemini Diego Flores")
+    st.title("Métricas IA")
 
     # Initialize session state
     initialize_session_state()
@@ -52,13 +52,8 @@ def text_page():
     safety_settings = json.loads(safety_settings)
         
     # Text input for the query
-    prompt = st.text_input("Ingresa tu pregunta:")
-
-    # Check if the query is provided
-    if not prompt:
-        st.error("Ingresa tu pregunta.")
-        st.stop()
-
+    prompt = 'Que es gemini?'
+ 
     # Initialize the generative model
     gemini = genai.GenerativeModel(
         model_name="gemini-pro",
@@ -67,18 +62,8 @@ def text_page():
     )
 
     prompt_parts = [prompt]
-
-    try:
-        # Generate content using the model
-        response = gemini.generate_content(prompt_parts)
-        st.subheader("Gemini Response:")
-        if response.text:
-            st.write(response.text)
-        else:
-            st.write("No output from Gemini.")
-    except Exception as e:
-        st.error(f"An error occurred: {str(e)}")
-
+    st.write(gemini.generate_content(prompt_parts).text)
+    
 # Run the Streamlit app
 if __name__ == "__main__":
     text_page()
