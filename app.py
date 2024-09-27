@@ -253,7 +253,7 @@ def text_page():
             calcular_veintiles(df[df[filtro_col] == 'train'], y_real_col, prob_col)
             st.write("OOT:")
             calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
-
+            
             # Crear una sección de chat
             st.subheader("Chat con Gemini")
             
@@ -271,10 +271,14 @@ def text_page():
                     st.session_state.messages.append({"role": "user", "content": user_input})
                     
                     # Generar la respuesta usando el modelo
-                    response = gemini.generate_content([user_input]).text
+                    with st.spinner("Generando respuesta..."):
+                        response = gemini.generate_content([user_input]).text
                     
                     # Agregar la respuesta del modelo a la lista
                     st.session_state.messages.append({"role": "assistant", "content": response})
+                    
+                    # Limpiar el campo de texto
+                    user_input = ""
             
             # Mostrar el historial de la conversación
             for message in st.session_state.messages:
