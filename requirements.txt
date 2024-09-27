@@ -1,7 +1,6 @@
 streamlit
 pandas
 numpy
-matplotlib  
-ks_2samp
+matplotlib   
 scipy
 scikit-learn 
