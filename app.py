@@ -193,7 +193,7 @@ def text_page():
             st.write(f"KS: {ks_stat_oot.statistic:.4f} (p-value: {ks_stat_oot.pvalue:.3e})")
 
             # Generación de conclusión usando Gemini
-            prompt = f"Haz una conclusión sobre la prueba de Kolmogorov para el entrenamiento con valores: {ks_stat_train} y fuera de tiempo con valores: {ks_stat_oot}. si el p-valor es menor de 0.05 se puede concluir que el modelo esta discriminando bien, hazlo solo en 2 lineas maximo"
+            prompt = f"Haz una conclusión sobre la prueba de Kolmogorov para el entrenamiento con valores: {ks_stat_train} y fuera de tiempo con valores: {ks_stat_oot}. si el p-valor es menor de 0.05 se puede concluir que el modelo esta discriminando de forma adecuada,hazlo en maximo 2 parrafos"
             prompt_parts = [prompt]
             conclusion = gemini.generate_content(prompt_parts).text
 
@@ -216,7 +216,7 @@ def text_page():
             accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_train, proba_train)
             
             # Generación de conclusión usando Gemini
-            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train}."
+            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train},hazlo en maximo 2 parrafos"
             prompt_parts = [prompt]
             conclusion = gemini.generate_content(prompt_parts).text
             
@@ -231,7 +231,7 @@ def text_page():
             accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_oot, proba_oot)
             
             # Generación de conclusión usando Gemini
-            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train}."
+            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train},hazlo en maximo 2 parrafos"
             prompt_parts = [prompt]
             conclusion = gemini.generate_content(prompt_parts).text
             
