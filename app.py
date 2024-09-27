@@ -206,15 +206,16 @@ def text_page():
                 "A continuación se presentan las matrices de confusión y las métricas asociadas para los conjuntos de entrenamiento y fuera de tiempo (OOT). "
                 "Estas métricas permiten evaluar el rendimiento del modelo en cada uno de estos conjuntos de datos."
             )
-
+            
+            # Mostrar métricas y matriz de confusión para el conjunto de entrenamiento
             st.write("Train:")
-            calcular_metricas_y_graficar(y_real_train, proba_train)
-            accuracy, precision, sensitivity, specificity, f1_score = calcular_metricas_y_graficar(y_real_train, proba_train)
+            accuracy_train, precision_train, sensitivity_train, specificity_train, f1_score_train = calcular_metricas_y_graficar(y_real_train, proba_train)
+            
             # Generación de conclusión usando Gemini
-            prompt = f"Haz una conclusión sobre los resultados de las siguientes metricas {accuracy}, p{recision}, {sensitivity}, {specificity}, {f1_score} "
+            prompt = f"Haz una conclusión sobre los resultados de las siguientes métricas: Accuracy: {accuracy_train}, Precision: {precision_train}, Sensitivity: {sensitivity_train}, Specificity: {specificity_train}, F1 Score: {f1_score_train}."
             prompt_parts = [prompt]
             conclusion = gemini.generate_content(prompt_parts).text
-
+            
             # Mostrar la conclusión generada
             st.write("### Conclusión:")
             st.write(conclusion)
