@@ -45,7 +45,7 @@ def calcular_metricas_y_graficar(y_real, proba):
     
     # Graficar matriz de confusión
     cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix=confusion_matrix, display_labels=[False, True])
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(4, 3))
     cm_display.plot(ax=ax, cmap=plt.cm.YlGnBu)
     st.pyplot(fig)
     
@@ -189,14 +189,13 @@ def text_page():
             st.write(f"KS: {ks_stat_oot.statistic:.4f} (p-value: {ks_stat_oot.pvalue:.3e})")
 
             # Generación de conclusión usando Gemini
-            prompt = f"Haz una conclusión sobre el valor de la prueba de Kolmogorov para la muestra de entrenamiento: {ks_stat_train} y fuera de tiempo: {ks_stat_oot}."
+            prompt = f"Haz una conclusión sobre el valor de la prueba de Kolmogorov para la muestra de entrenamiento: {ks_stat_train} y fuera de tiempo: {ks_stat_oot}. si el p-valor es menor de 0.05 se puede concluir que el modelo esta discriminando bien"
             prompt_parts = [prompt]
             conclusion = gemini.generate_content(prompt_parts).text
 
             # Mostrar la conclusión generada
             st.write("### Conclusión:")
             st.write(conclusion)
-
 
 
             # Métricas y matriz de confusión
