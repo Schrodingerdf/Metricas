@@ -4,5 +4,5 @@ numpy
 matplotlib   
 scipy
 scikit-learn 
-google-generativeai
-fpdf
+google-generativeai 
+sklearn 
