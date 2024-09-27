@@ -1,38 +1,29 @@
-import subprocess
-import os
+import streamlit as st
+from langchain_core.messages import HumanMessage
+from langchain_google_genai import ChatGoogleGenerativeAI
 
-def instalar_ollama():
-    # Ejecutar el comando curl para instalar Ollama
-    try:
-        print("Instalando Ollama...")
-        subprocess.run(["curl", "https://ollama.ai/install.sh", "|", "sh"], check=True)
-        print("Ollama instalado correctamente.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error durante la instalación de Ollama: {e}")
+# Configurar la clave de API de Google Gemini
+GOOGLE_API_KEY = 'AIzaSyCLY-K449EXP04NAMu2XEugi29HWGYdMlY'  # Reemplazar con tu clave válida
 
-def iniciar_servidor_ollama():
-    # Ejecutar el comando para iniciar el servidor Ollama
-    try:
-        print("Iniciando el servidor de Ollama...")
-        subprocess.run(["ollama", "serve"], check=True)
-        print("Servidor de Ollama iniciado correctamente.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error al iniciar el servidor de Ollama: {e}")
+# Inicializar el modelo de lenguaje Gemini para texto
+llm_txt = ChatGoogleGenerativeAI(
+    model='gemini-pro',
+    google_api_key=GOOGLE_API_KEY,
+    temperature=0.2
+)
 
-def descargar_modelo(name_model):
-    # Ejecutar el comando para descargar el modelo de Ollama
-    try:
-        print(f"Descargando el modelo {name_model}...")
-        subprocess.run(["ollama", "pull", name_model], check=True)
-        print(f"Modelo {name_model} descargado correctamente.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error al descargar el modelo {name_model}: {e}")
+# Título de la aplicación en Streamlit
+st.title("Chat con Gemini - API de Google")
 
-if __name__ == "__main__":
-    # Llamar a las funciones en orden
-    instalar_ollama()
-    iniciar_servidor_ollama()
+# Entrada de texto del usuario
+pregunta = st.text_input("Haz tu pregunta:", value="¿Qué es la inflación y cómo le fue al Perú en ese aspecto en el 2021?")
 
-    # Especificar el nombre del modelo que deseas descargar
-    name_model = "phi3:medium"
-    descargar_modelo(name_model)
+# Botón para enviar la consulta
+if st.button("Consultar a Gemini"):
+    # Hacer la consulta a Gemini
+    with st.spinner('Consultando a Gemini...'):
+        response_txt = llm_txt.invoke(pregunta)
+
+    # Mostrar la respuesta de Gemini
+    st.markdown(f"**Respuesta de Gemini:**\n\n{response_txt.content}")
+
