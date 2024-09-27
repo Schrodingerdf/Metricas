@@ -14,7 +14,7 @@ def initialize_session_state():
 
 # Main Streamlit app
 def text_page():
-    st.title("Gemini Diego Flores")
+    st.title("Gemini - Diego Flores I.")
 
     # Initialize session state
     initialize_session_state()
