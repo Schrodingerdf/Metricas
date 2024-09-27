@@ -1,28 +1,38 @@
 import streamlit as st
 import pandas as pd
-import altair as alt
-
-# Set the title of the app
-st.title("AutoDoc") 
 
 # Título de la app
-st.title('Cargar y visualizar archivo CSV')
+st.title('Aplicación para Ingresar y Visualizar Datos')
 
-# Instrucción para que el usuario suba un archivo CSV
-uploaded_file = st.file_uploader("Sube tu archivo CSV", type="csv")
+# Inicializar una lista para almacenar los datos
+if 'data' not in st.session_state:
+    st.session_state['data'] = []
 
-# Si el usuario sube un archivo
-if uploaded_file is not None:
-    # Carga el archivo en un DataFrame
-    df = pd.read_csv(uploaded_file)
+# Formulario para ingresar datos
+with st.form(key='data_form'):
+    nombre = st.text_input('Nombre:')
+    edad = st.number_input('Edad:', min_value=0, max_value=120)
+    ciudad = st.text_input('Ciudad:')
     
-    # Muestra los datos
-    st.write("Vista previa de los primeros 5 registros del archivo CSV:")
-    st.dataframe(df.head())  # Puedes cambiar el número de filas si lo deseas
-    
-    # Información básica del DataFrame
-    st.write("Información del archivo CSV:")
-    st.write(df.describe())
+    # Botón para enviar el formulario
+    submit_button = st.form_submit_button(label='Agregar datos')
+
+# Si se presiona el botón, agregar los datos a la lista
+if submit_button:
+    if nombre and ciudad:  # Asegúrate de que los campos no estén vacíos
+        nuevo_dato = {'Nombre': nombre, 'Edad': edad, 'Ciudad': ciudad}
+        st.session_state['data'].append(nuevo_dato)
+        st.success("¡Datos agregados exitosamente!")
+    else:
+        st.error("Por favor, completa todos los campos antes de agregar los datos.")
+
+# Convertir los datos almacenados a un DataFrame de pandas
+df = pd.DataFrame(st.session_state['data'])
+
+# Si hay datos, mostrarlos
+if not df.empty:
+    st.write("Datos ingresados:")
+    st.dataframe(df)
 else:
-    st.write("Por favor, sube un archivo CSV para visualizar los datos.")
+    st.write("No se han ingresado datos aún.")
 
