@@ -69,9 +69,6 @@ def text_page():
     )
     
     # Text input for the query
-    #prompt = 'Que es gemini?'
-    #prompt_parts = [prompt]
-    #st.write(gemini.generate_content(prompt_parts).text)
 
 # Función KS
 def evaluate_ks(y_real, y_proba):
@@ -183,7 +180,9 @@ if uploaded_file is not None:
 
         # KS
         st.subheader("Resultado del Test KS")
-        
+        prompt = 'Describe la prueba de kolgomorov en 2 oraciones?'
+        prompt_parts = [prompt]
+        st.write(gemini.generate_content(prompt_parts).text)
         st.write("Train:")
         ks_stat = evaluate_ks(y_real_train, proba_train)
         st.write("OOT:")
