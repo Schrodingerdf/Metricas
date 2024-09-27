@@ -7,6 +7,7 @@ from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
 import google.generativeai as genai
+from fpdf import FPDF
 import json
 
 # Define your API key and password
@@ -101,6 +102,7 @@ def calcular_veintiles(df, y_real_col, prob_col):
     veintil_df['%Malos_acum'] = (veintil_df['Malos_acum'] / veintil_df['N°Malos'].sum() * 100).round(1).apply(lambda x: f"{x:.1f}%")
 
     st.write(veintil_df)
+
 
 # Main Streamlit app
 def text_page():
@@ -251,6 +253,41 @@ def text_page():
             calcular_veintiles(df[df[filtro_col] == 'train'], y_real_col, prob_col)
             st.write("OOT:")
             calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
+
+                # Después de calcular las métricas para ambos conjuntos
+    if st.button("Generar PDF"):
+        # Resultados de KS
+        ks_stat_train = evaluate_ks(y_real_train, proba_train)
+        ks_stat_oot = evaluate_ks(y_real_oot, proba_oot)
+
+        # Métricas para el conjunto de entrenamiento
+        metrics_train = {
+            "Accuracy": accuracy_train,
+            "Precision": precision_train,
+            "Sensitivity": sensitivity_train,
+            "Specificity": specificity_train,
+            "F1 Score": f1_score_train
+        }
+
+        # Métricas para el conjunto OOT
+        metrics_oot = {
+            "Accuracy": accuracy_oot,
+            "Precision": precision_oot,
+            "Sensitivity": sensitivity_oot,
+            "Specificity": specificity_oot,
+            "F1 Score": f1_score_oot
+        }
+
+        pdf_file_path = generar_pdf(ks_stat_train, ks_stat_oot, metrics_train, metrics_oot)
+        st.success("PDF generado con éxito!")
+
+       # Botón de descarga
+        st.download_button(
+            label="Descargar PDF",
+            data=open(pdf_file_path, "rb").read(),
+            file_name="resultados_analisis.pdf",
+            mime="application/pdf"
+        )
 
 # Run the Streamlit app
 if __name__ == "__main__":
