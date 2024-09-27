@@ -106,6 +106,7 @@ def calcular_veintiles(df, y_real_col, prob_col):
 def text_page():
 
     st.title("Métricas IA")
+    st.write("¡Bienvenidos a Métricas IA! 🚀 Con nuestra herramienta, puedes calcular de manera rápida y sencilla las principales métricas de evaluación de modelos de scoring, todo potenciado con inteligencia artificial. 📊 Obtén análisis precisos y relevantes que te ayudarán a tomar decisiones informadas, evaluando el rendimiento de tus modelos desde la precisión hasta la matriz de confusión. Con Métricas IA, optimiza tus modelos y explora el potencial de tus datos de manera eficiente y efectiva. 💡✨")
     # Initialize session state
     initialize_session_state()
 
