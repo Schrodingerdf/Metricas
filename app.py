@@ -209,9 +209,9 @@ def text_page():
 
             st.write("Train:")
             calcular_metricas_y_graficar(y_real_train, proba_train)
-            
+            accuracy, precision, sensitivity, specificity, f1_score = calcular_metricas_y_graficar(y_real_train, proba_train)
             # Generación de conclusión usando Gemini
-            prompt = f"Haz una conclusión sobre los resultados de {calcular_metricas_y_graficar(y_real_train, proba_train)} "
+            prompt = f"Haz una conclusión sobre los resultados de las siguientes metricas {accuracy}, p{recision}, {sensitivity}, {specificity}, {f1_score} "
             prompt_parts = [prompt]
             conclusion = gemini.generate_content(prompt_parts).text
 
