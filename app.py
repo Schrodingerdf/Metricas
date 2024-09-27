@@ -167,35 +167,35 @@ def text_page():
             proba_oot = df[df[filtro_col] == 'oot'][prob_col]
 
             # KS
-st.subheader("Resultado del Test KS")
+            st.subheader("Resultado del Test KS")
 
-# Explicación de la prueba KS
-st.write(
-    "La prueba de Kolmogorov-Smirnov es una prueba de bondad de ajuste utilizada para determinar si una muestra proviene de una distribución específica. "
-    "Compara la función de distribución empírica de la muestra con la función de distribución teórica esperada y calcula el valor d, que representa "
-    "la máxima diferencia absoluta entre las dos funciones."
-)
+            # Explicación de la prueba KS
+            st.write(
+                "La prueba de Kolmogorov-Smirnov es una prueba de bondad de ajuste utilizada para determinar si una muestra proviene de una distribución específica. "
+                "Compara la función de distribución empírica de la muestra con la función de distribución teórica esperada y calcula el valor d, que representa "
+                "la máxima diferencia absoluta entre las dos funciones."
+            )
 
-# Cálculo de la estadística KS para el conjunto de entrenamiento y fuera de tiempo
-ks_stat_train = evaluate_ks(y_real_train, proba_train)
-ks_stat_oot = evaluate_ks(y_real_oot, proba_oot)
+            # Cálculo de la estadística KS para el conjunto de entrenamiento y fuera de tiempo
+            ks_stat_train = evaluate_ks(y_real_train, proba_train)
+            ks_stat_oot = evaluate_ks(y_real_oot, proba_oot)
 
-# Mostrar resultados para el conjunto de entrenamiento
-st.write(f"**Conjunto de Entrenamiento:**")
-st.write(f"KS: {ks_stat_train.statistic:.4f} (p-value: {ks_stat_train.pvalue:.3e})")
+            # Mostrar resultados para el conjunto de entrenamiento
+            st.write(f"**Conjunto de Entrenamiento:**")
+            st.write(f"KS: {ks_stat_train.statistic:.4f} (p-value: {ks_stat_train.pvalue:.3e})")
 
-# Mostrar resultados para el conjunto fuera de tiempo
-st.write(f"**Conjunto Fuera de Tiempo:**")
-st.write(f"KS: {ks_stat_oot.statistic:.4f} (p-value: {ks_stat_oot.pvalue:.3e})")
+            # Mostrar resultados para el conjunto fuera de tiempo
+            st.write(f"**Conjunto Fuera de Tiempo:**")
+            st.write(f"KS: {ks_stat_oot.statistic:.4f} (p-value: {ks_stat_oot.pvalue:.3e})")
 
-# Generación de conclusión usando Gemini
-prompt = f"Haz una conclusión sobre el valor de la prueba de Kolmogorov para la muestra de entrenamiento: {ks_stat_train} y fuera de tiempo: {ks_stat_oot}."
-prompt_parts = [prompt]
-conclusion = gemini.generate_content(prompt_parts).text
+            # Generación de conclusión usando Gemini
+            prompt = f"Haz una conclusión sobre el valor de la prueba de Kolmogorov para la muestra de entrenamiento: {ks_stat_train} y fuera de tiempo: {ks_stat_oot}."
+            prompt_parts = [prompt]
+            conclusion = gemini.generate_content(prompt_parts).text
 
-# Mostrar la conclusión generada
-st.write("### Conclusión:")
-st.write(conclusion)
+            # Mostrar la conclusión generada
+            st.write("### Conclusión:")
+            st.write(conclusion)
 
 
 
