@@ -5,8 +5,6 @@ from scipy.stats import ks_2samp
 from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
-
-## GenIA
 import google.generativeai as genai
 import json
 
@@ -63,6 +61,8 @@ def text_page():
         generation_config=generation_config,
         safety_settings=safety_settings
     )
+
+    return gemini  # Return the initialized model
 
 # Función KS
 def evaluate_ks(y_real, y_proba):
@@ -164,6 +164,7 @@ if uploaded_file is not None:
 
     # Mostrar análisis
     if st.button("Ejecutar análisis"):
+        gemini = text_page()  # Llama a text_page para inicializar gemini
 
         y_real_train = df[df[filtro] == 'train'][y_real_col]
         proba_train = df[df[filtro] == 'train'][prob_col]
@@ -173,7 +174,7 @@ if uploaded_file is not None:
 
         # KS
         st.subheader("Resultado del Test KS")
-        prompt = 'Que es gemini?'
+        prompt = 'Que es la prueba de kolgomorov?'
         prompt_parts = [prompt]
         st.write(gemini.generate_content(prompt_parts).text)
         
