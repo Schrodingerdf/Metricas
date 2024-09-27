@@ -254,6 +254,35 @@ def text_page():
             st.write("OOT:")
             calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
 
+            # Crear una sección de chat
+            st.subheader("Chat con Gemini")
+            
+            # Inicializar la lista de mensajes en el estado de sesión
+            if 'messages' not in st.session_state:
+                st.session_state.messages = []
+            
+            # Cuadro de texto para ingresar preguntas
+            user_input = st.text_input("Escribe tu pregunta aquí:")
+            
+            # Botón para enviar la pregunta
+            if st.button("Enviar"):
+                if user_input:
+                    # Agregar el mensaje del usuario a la lista
+                    st.session_state.messages.append({"role": "user", "content": user_input})
+                    
+                    # Generar la respuesta usando el modelo
+                    response = gemini.generate_content([user_input]).text
+                    
+                    # Agregar la respuesta del modelo a la lista
+                    st.session_state.messages.append({"role": "assistant", "content": response})
+            
+            # Mostrar el historial de la conversación
+            for message in st.session_state.messages:
+                if message["role"] == "user":
+                    st.write(f"**Tú:** {message['content']}")
+                else:
+                    st.write(f"**Gemini:** {message['content']}")
+
 # Run the Streamlit app
 if __name__ == "__main__":
     text_page()
