@@ -1,38 +1,45 @@
 import streamlit as st
-import pandas as pd
+import openai  # Asegúrate de tener instalada la biblioteca openai
+
+# Configura tu clave de API de OpenAI (puedes cambiarlo a Gemini si tienes una API de Gemini)
+openai.api_key = 'tu_clave_de_api'
 
 # Título de la app
-st.title('AUTO-DOC')
+st.title('Chatbot Interactivo')
 
-# Inicializar una lista para almacenar los datos
-if 'data' not in st.session_state:
-    st.session_state['data'] = []
+# Inicializar el historial de chat si no existe en la sesión
+if 'chat_history' not in st.session_state:
+    st.session_state['chat_history'] = []
 
-# Formulario para ingresar datos
-with st.form(key='data_form'):
-    nombre = st.text_input('Nombre:')
-    edad = st.number_input('Edad:', min_value=0, max_value=120)
-    ciudad = st.text_input('Ciudad:')
+# Función para obtener la respuesta del modelo de lenguaje
+def obtener_respuesta(pregunta):
+    # Llama al modelo GPT-4 de OpenAI (puedes usar cualquier modelo basado en API)
+    response = openai.Completion.create(
+        engine="text-davinci-003",  # Cambia esto al modelo que prefieras
+        prompt=pregunta,
+        max_tokens=150,
+        temperature=0.7
+    )
+    return response['choices'][0]['text'].strip()
+
+# Caja de texto para que el usuario ingrese su mensaje
+pregunta_usuario = st.text_input("Haz tu pregunta:")
+
+# Si el usuario escribe algo y presiona Enter
+if pregunta_usuario:
+    # Agrega la pregunta al historial
+    st.session_state['chat_history'].append(f"Tú: {pregunta_usuario}")
     
-    # Botón para enviar el formulario
-    submit_button = st.form_submit_button(label='Agregar datos')
+    # Obtiene la respuesta del modelo
+    respuesta = obtener_respuesta(pregunta_usuario)
+    
+    # Agrega la respuesta del chatbot al historial
+    st.session_state['chat_history'].append(f"Chatbot: {respuesta}")
+    
+    # Limpiar la caja de texto después de enviar la pregunta
+    st.experimental_rerun()
 
-# Si se presiona el botón, agregar los datos a la lista
-if submit_button:
-    if nombre and ciudad:  # Asegúrate de que los campos no estén vacíos
-        nuevo_dato = {'Nombre': nombre, 'Edad': edad, 'Ciudad': ciudad}
-        st.session_state['data'].append(nuevo_dato)
-        st.success("¡Datos agregados exitosamente!")
-    else:
-        st.error("Por favor, completa todos los campos antes de agregar los datos.")
-
-# Convertir los datos almacenados a un DataFrame de pandas
-df = pd.DataFrame(st.session_state['data'])
-
-# Si hay datos, mostrarlos
-if not df.empty:
-    st.write("Datos ingresados:")
-    st.dataframe(df)
-else:
-    st.write("No se han ingresado datos aún.")
-
+# Mostrar el historial de chat
+if st.session_state['chat_history']:
+    for mensaje in st.session_state['chat_history']:
+        st.write(mensaje)
