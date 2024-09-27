@@ -200,6 +200,13 @@ def text_page():
 
             # Métricas y matriz de confusión
             st.subheader("Matriz de Confusión y Métricas")
+            
+            # Explicación breve
+            st.write(
+                "A continuación se presentan las matrices de confusión y las métricas asociadas para los conjuntos de entrenamiento y fuera de tiempo (OOT). "
+                "Estas métricas permiten evaluar el rendimiento del modelo en cada uno de estos conjuntos de datos."
+            )
+
             st.write("Train:")
             calcular_metricas_y_graficar(y_real_train, proba_train)
             st.write("OOT:")
