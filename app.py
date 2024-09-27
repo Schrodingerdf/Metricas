@@ -7,7 +7,7 @@ data_path = "data/example_data.csv"
 df = pd.read_csv(data_path)
 
 # Set the title of the app
-st.title("Interactive Streamlit App Diego Flores")
+st.title("App Diego Flores")
 
 # Display a text header
 st.header("Exploring US Cities")
