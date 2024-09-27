@@ -103,19 +103,27 @@ if uploaded_file is not None:
     y_real_col = st.selectbox("Selecciona la columna Target:", df.columns)
     prob_col = st.selectbox("Selecciona la columna de probabilidades:", df.columns)
     filtro = st.selectbox("Selecciona la columna de filtro:", df.columns)
-    
+
     # Mostrar análisis
     if st.button("Ejecutar análisis"):
-        y_real = df[y_real_col]
-        proba = df[prob_col]
+
+        y_real_train = df[df.filtro=='train'][y_real_col]
+        proba_train = df[df.filtro=='train'][prob_col]
+
+        y_real_oot = df[df.filtro=='oot'][y_real_col]
+        proba_oot = df[df.filtro=='oot'][prob_col]
+
 
         # KS
         st.subheader("Resultado del Test KS")
-        ks_stat = evaluate_ks(y_real, proba)
+        ks_stat = evaluate_ks(y_real_train, proba_train)
+        ks_stat = evaluate_ks(y_real_oot, proba_oot)
+
 
         # Métricas y matriz de confusión
         st.subheader("Matriz de Confusión y Métricas")
-        calcular_metricas_y_graficar(y_real, proba)
+        calcular_metricas_y_graficar(y_real_train, proba_train)
+        calcular_metricas_y_graficar(y_real_oot, proba_oot)
 
         # Veintiles
         st.subheader("Tabla de Eficiencia")
