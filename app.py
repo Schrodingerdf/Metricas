@@ -1,4 +1,3 @@
-import streamlit as st
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 # Configurar la clave de API de Google Gemini
@@ -11,17 +10,23 @@ llm_txt = ChatGoogleGenerativeAI(
     temperature=0.2
 )
 
-# Título de la aplicación en Streamlit
-st.title("Chat con Gemini - API de Google")
-
-# Entrada de texto del usuario
-pregunta = st.text_input("Haz tu pregunta:", value="¿Qué es la inflación y cómo le fue al Perú en ese aspecto en el 2021?")
-
-# Botón para enviar la consulta
-if st.button("Consultar a Gemini"):
-    # Hacer la consulta a Gemini
-    with st.spinner('Consultando a Gemini...'):
+def main():
+    print("Bienvenido al chat con Gemini. Escribe 'salir' para terminar.")
+    
+    while True:
+        # Obtener la pregunta del usuario
+        pregunta = input("Tú: ")
+        
+        # Verificar si el usuario quiere salir
+        if pregunta.lower() == 'salir':
+            print("Saliendo del chat. ¡Hasta luego!")
+            break
+        
+        # Hacer la consulta a Gemini
         response_txt = llm_txt.invoke(pregunta)
+        
+        # Mostrar la respuesta de Gemini
+        print(f"Gemini: {response_txt.content}")
 
-    # Mostrar la respuesta de Gemini
-    st.markdown(f"**Respuesta de Gemini:**\n\n{response_txt.content}")
+if __name__ == "__main__":
+    main()
