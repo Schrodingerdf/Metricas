@@ -1,5 +1,7 @@
 streamlit
 pandas
 numpy
-matplotlib 
-langchain-google-genai
+matplotlib  
+ks_2samp
+roc_curve
+metrics
