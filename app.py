@@ -1,3 +1,5 @@
+
+# Metricas
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -5,6 +7,18 @@ from scipy.stats import ks_2samp
 from sklearn.metrics import roc_curve
 from sklearn import metrics
 import matplotlib.pyplot as plt
+
+## GenIA
+import google.generativeai as genai
+import streamlit as st
+import json
+
+# Define your API key and password
+API_KEY = "AIzaSyCLY-K449EXP04NAMu2XEugi29HWGYdMlY"
+PASSWORD = "112357"
+
+
+
 
 # Función KS
 def evaluate_ks(y_real, y_proba):
