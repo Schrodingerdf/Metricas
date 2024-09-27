@@ -52,11 +52,11 @@ def text_page():
     safety_settings = json.loads(safety_settings)
         
     # Text input for the query
-    prompt = st.text_input("Enter your Query:")
+    prompt = st.text_input("Ingresa tu pregunta:")
     
     # Check if the query is provided
     if not prompt:
-        st.error("Please enter your query.")
+        st.error("Ingresa tu pregunta.")
         st.stop()
 
     # Initialize the generative model
