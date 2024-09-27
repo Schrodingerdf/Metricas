@@ -155,7 +155,7 @@ def text_page():
 
     if uploaded_file is not None:
         # Leer CSV
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_csv(uploaded_file,sep=',')
         st.write("Contenido del archivo CSV:")
         st.dataframe(df)
 
