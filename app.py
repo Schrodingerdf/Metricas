@@ -254,6 +254,23 @@ def text_page():
             st.write("OOT:")
             calcular_veintiles(df[df[filtro_col] == 'oot'], y_real_col, prob_col)
 
+            # Chat functionality
+            st.subheader("Chat")
+            user_input = st.text_input("Escribe tu mensaje:")
+        
+            if user_input:
+                st.session_state.messages.append({"role": "user", "content": user_input})
+                # Call the Generative AI model
+                response = gemini.generate(user_input)
+                st.session_state.messages.append({"role": "assistant", "content": response["output"]})
+        
+            # Display the chat messages
+            for msg in st.session_state.messages:
+                if msg["role"] == "user":
+                    st.write(f"You: {msg['content']}")
+                else:
+                    st.write(f"Assistant: {msg['content']}")
+
 # Run the Streamlit app
 if __name__ == "__main__":
     text_page()
